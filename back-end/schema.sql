@@ -9,13 +9,13 @@ create table if not exists usuarios(
 );
 
 create table if not exists produtos(
-   int serial primary key,
+   id serial primary key,
    usuario_id integer not null,
    nome text not null,
-   estoque integer,
-   categoria text not null,
+   estoque integer not null,
+   categoria text,
    preco integer not null,
-   descricao text,
+   descricao text not null,
    imagem text,
    foreign key (usuario_id) references usuarios (id)
 );
