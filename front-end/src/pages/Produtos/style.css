@@ -1,0 +1,12 @@
+.main_layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.content {
+    width: 100%;
+    height: 100vh;
+}

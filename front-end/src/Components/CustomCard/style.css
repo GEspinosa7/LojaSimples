@@ -1,0 +1,47 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -30px;
+}
+
+.card_body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    height: 400px;
+    width: 230px;
+    border-radius: 24px;
+}
+
+.card header {
+    width: 100%;
+}
+
+.card_body p {
+    font-size: 12pt;
+    text-align: start;
+    padding-left: 20px;
+}
+
+.card_body img {
+    height: 50%;
+    width: 90%;
+    border-radius: 24px;
+}
+
+.card_body footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.card_body footer .card_unidade {
+    margin-left: 15px;
+}
+
+.card_body footer .card_preco {
+    margin-right: 15px;
+}
