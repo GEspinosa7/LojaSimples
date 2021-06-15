@@ -5,5 +5,11 @@ const validarCadastro = ({ nome, estoque, preco, descricao }) => {
    if (!descricao || descricao === '') return 'Campo descricao é obrigatório';
 }
 
+const validarEdicao = ({ nome, estoque, preco, descricao }) => {
+   if (nome === null || nome === '') return 'Campo nome não pode ser vazio';
+   if (estoque === null || estoque === '') return 'Campo estoque não pode ser vazio';
+   if (preco === null || preco === '') return 'Campo preco não pode ser vazio';
+   if (descricao === null || descricao === '') return 'Campo descricao não pode ser vazio';
+}
 
-module.exports = { validarCadastro };
+module.exports = { validarCadastro, validarEdicao };

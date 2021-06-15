@@ -1,5 +1,5 @@
 const db = require("../connection");
-const { validarCadastro } = require('../validations/produto');
+const { validarCadastro, validarEdicao } = require('../validations/produto');
 
 const listarProdutos = async (req, res) => {
    const { usuario } = req;
@@ -28,7 +28,7 @@ const obterProduto = async (req, res) => {
    try {
       const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
       const { rows, rowCount } = await db.query(encontrarProduto, [id, usuario.id]);
-      if (rowCount === 0) return res.status(400).json({ erro: 'Este produto não existe ou não pertence a sua loja' });
+      if (rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
 
       const produto = rows[0];
 
@@ -43,7 +43,7 @@ const cadastrarProduto = async (req, res) => {
    const { nome, estoque, categoria, preco, descricao, imagem } = req.body;
 
    const erro = validarCadastro(req.body);
-   if (erro) return res.status(400).json({ erro: erro });
+   if (erro) return res.status(400).json({ Erro: erro });
 
    try {
       const criarProduto = `
@@ -53,13 +53,73 @@ const cadastrarProduto = async (req, res) => {
       const { rowCount } = await db.query(criarProduto, [usuario.id, nome, estoque, categoria, preco, descricao, imagem]);
       if (rowCount === 0) return res.status(400).json({ Erro: 'Não foi possível cadastrar este produto' });
 
-      return res.status(200).json({ sucesso: 'Produto cadastrado com sucesso!' });
+      return res.status(200).json({ Sucesso: 'Produto cadastrado!' });
    } catch (error) {
       return res.status(400).json(error.message);
    }
 };
 
-const editarProduto = async (req, res) => { };
+const editarProduto = async (req, res) => {
+   const { usuario } = req;
+   const { id } = req.params;
+   const { nome, estoque, categoria, preco, descricao, imagem } = req.body;
+
+   const erro = validarEdicao(req.body);
+   if (erro) return res.status(400).json({ erro: erro });
+
+   const novosDados = {
+      nome: '',
+      estoque: '',
+      categoria: '',
+      preco: '',
+      descricao: '',
+      imagem: ''
+   };
+
+   try {
+      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
+      const produto = await db.query(encontrarProduto, [id, usuario.id]);
+      if (produto.rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
+
+      nome ? novosDados.nome = nome : novosDados.nome = produto.rows[0].nome;
+      estoque ? novosDados.estoque = estoque : novosDados.estoque = produto.rows[0].estoque;
+      categoria ? novosDados.categoria = categoria : novosDados.categoria = produto.rows[0].categoria;
+      preco ? novosDados.preco = preco : novosDados.preco = produto.rows[0].preco;
+      descricao ? novosDados.descricao = descricao : novosDados.descricao = produto.rows[0].descricao;
+      imagem ? novosDados.imagem = imagem : novosDados.imagem = produto.rows[0].imagem;
+
+      const atualizarProduto = `
+         update produtos
+         set 
+         nome = $1,
+         estoque = $2,
+         categoria = $3,
+         preco = $4,
+         descricao = $5,
+         imagem = $6
+         where id = $7 and usuario_id = $8;
+      `;
+
+      const { rowCount } = await db.query(atualizarProduto,
+         [
+            novosDados.nome,
+            novosDados.estoque,
+            novosDados.categoria,
+            novosDados.preco,
+            novosDados.descricao,
+            novosDados.imagem,
+            id,
+            usuario.id
+         ]
+      );
+      if (rowCount === 0) return res.status(400).json({ Erro: 'Não foi possível atualizar os dados deste produto' });
+
+      return res.status(200).json({ Sucesso: 'Produto cadastrado!' });
+   } catch (error) {
+      return res.status(400).json(error.message);
+   }
+
+};
 
 const deletarProduto = async (req, res) => {
    const { usuario } = req;
@@ -68,7 +128,7 @@ const deletarProduto = async (req, res) => {
    try {
       const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
       const produto = await db.query(encontrarProduto, [id, usuario.id]);
-      if (produto.rowCount === 0) return res.status(400).json({ erro: 'Este produto não existe ou não pertence a sua loja' });
+      if (produto.rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
 
       const apagarProduto = 'delete from produtos where id = $1  and usuario_id = $2';
       const { rowCount } = await db.query(apagarProduto, [id, usuario.id]);
