@@ -51,7 +51,7 @@ const cadastrarProduto = async (req, res) => {
          values ($1, $2, $3, $4, $5, $6, $7);
       `;
       const { rowCount } = await db.query(criarProduto, [usuario.id, nome, estoque, categoria, preco, descricao, imagem]);
-      if (rowCount === 0) return res.status(400).json({ Erro: 'Não foi possível cadastrar esse produto' });
+      if (rowCount === 0) return res.status(400).json({ Erro: 'Não foi possível cadastrar este produto' });
 
       return res.status(200).json({ sucesso: 'Produto cadastrado com sucesso!' });
    } catch (error) {
@@ -61,9 +61,24 @@ const cadastrarProduto = async (req, res) => {
 
 const editarProduto = async (req, res) => { };
 
-const deletarProduto = async (req, res) => { };
+const deletarProduto = async (req, res) => {
+   const { usuario } = req;
+   const { id } = req.params;
 
+   try {
+      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
+      const produto = await db.query(encontrarProduto, [id, usuario.id]);
+      if (produto.rowCount === 0) return res.status(400).json({ erro: 'Este produto não existe ou não pertence a sua loja' });
 
+      const apagarProduto = 'delete from produtos where id = $1  and usuario_id = $2';
+      const { rowCount } = await db.query(apagarProduto, [id, usuario.id]);
+      if (rowCount === 0) return res.status(400).json({ Erro: 'Não foi possível apagar este produto' });
+
+      return res.status(200).json({ Sucesso: 'Produto apagado!' });
+   } catch (error) {
+      return res.status(400).json(error.message);
+   }
+};
 
 module.exports = {
    listarProdutos,
