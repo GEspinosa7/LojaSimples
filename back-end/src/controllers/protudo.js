@@ -20,7 +20,22 @@ const listarProdutos = async (req, res) => {
    }
 };
 
-const obterProduto = async (req, res) => { };
+const obterProduto = async (req, res) => {
+   const { usuario } = req;
+   const { id } = req.params;
+
+   try {
+      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
+      const { rows, rowCount } = await db.query(encontrarProduto, [id, usuario.id]);
+      if (rowCount === 0) return res.status(400).json({ erro: 'Este produto não existe ou não pertence a sua loja' });
+
+      const produto = rows[0];
+
+      return res.status(200).json(produto);
+   } catch (error) {
+      return res.status(400).json(error.message);
+   }
+};
 
 const cadastrarProduto = async (req, res) => { };
 
