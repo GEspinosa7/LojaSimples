@@ -22,11 +22,21 @@ const cadastrarUsuario = async (req, res) => {
    } catch (error) {
       return res.status(400).json(error.message);
    }
-
 };
 
 const mostrarPerfil = async (req, res) => {
+   const { usuario } = req;
 
+   try {
+      const encontrarUsuario = 'select id, nome, email, nome_loja from usuarios where id = $1';
+      const { rows } = await db.query(encontrarUsuario, [usuario.id]);
+
+      const perfil = rows[0];
+
+      return res.status(200).json(perfil);
+   } catch (error) {
+      return res.status(400).json(error.message);
+   }
 };
 
 const editarPerfil = async (req, res) => {
