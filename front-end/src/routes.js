@@ -7,6 +7,10 @@ import {
   Redirect,
 } from 'react-router-dom';
 
+import { AuthContextProvider } from "./context/AuthContext";
+
+import useAuth from "./hooks/useAuth";
+
 import Login from './pages/Usuario/Login/index';
 import Cadastro from './pages/Usuario/Cadastro/index';
 import Perfil from './pages/Usuario/Perfil/index';
@@ -18,20 +22,32 @@ import Editar from './pages/Produtos/Editar';
 
 
 function Routes() {
+
+  function RotasProtegidas(props) {
+    const { token } = useAuth();
+    return (
+      <Route render={() => (token ? props.children : <Redirect to="/" />)} />
+    );
+  }
+
   return (
-    <div className="App">
-      <Router>
-        <Switch>
-          <Route path="/" exact component={Login} />
-          <Route path="/cadastro" exact component={Cadastro} />
-          <Route path="/perfil" exact component={Perfil} />
-          <Route path="/editar_perfil" exact component={EditarUsuario} />
-          <Route path="/produtos" exact component={Listar} />
-          <Route path="/novo_produto" exact component={Adicionar} />
-          <Route path="/editar_produto" exact component={Editar} />
-        </Switch>
-      </Router>
-    </div>
+    <AuthContextProvider>
+      <div className="App">
+        <Router>
+          <Switch>
+            <Route path="/" exact component={Login} />
+            <Route path="/cadastro" component={Cadastro} />
+            <RotasProtegidas>
+              <Route path="/produtos" exact component={Listar} />
+              <Route path="/produtos/novo" component={Adicionar} />
+              <Route path="/produtos/:id/editar" component={Editar} />
+              <Route path="/perfil" exact component={Perfil} />
+              <Route path="/perfil/editar" component={EditarUsuario} />
+            </RotasProtegidas>
+          </Switch>
+        </Router>
+      </div>
+    </AuthContextProvider>
   );
 }
 
