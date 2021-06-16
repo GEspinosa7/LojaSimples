@@ -7,8 +7,9 @@ const useStyles = makeStyles((theme) => ({
       color: 'black'
    },
    logout: {
-      color: '#FF505F'
-   }
+      color: '#FF505F',
+      cursor: 'pointer'
+   },
 }));
 
 

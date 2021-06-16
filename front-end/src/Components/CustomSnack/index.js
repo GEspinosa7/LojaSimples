@@ -1,29 +1,21 @@
-import { useState } from 'react';
 
 import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+import Slide from '@material-ui/core/Slide';
 
-function CustomSnack(openSnack) {
-   const [open, setOpen] = useState(false);
-
-   setOpen(openSnack);
-
-   const handleClose = (event, reason) => {
-      if (reason === 'clickaway') {
-         return;
-      }
-
-      setOpen(false);
-   };
-   return (
-      <>
-         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success">
-               This is a success message!
-            </Alert>
-         </Snackbar>
-      </>
-   );
+function TransitionDown(props) {
+   return <Slide {...props} direction="down" />;
 }
 
-export default CustomSnack;
+export default function TransitionsSnackbar({ erro }) {
+
+   return (
+      <Snackbar
+         style={{ color: "red" }}
+         open={erro ? true : false}
+         TransitionComponent={TransitionDown}
+         autoHideDuration={3000}
+         message={erro}
+      />
+
+   );
+};

@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from "react-router-dom";
+
+
+import baseURL from '../../utils/url';
 
 import Typography from '@material-ui/core/Typography';
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -9,18 +19,17 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 
-import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 
 import useStyles from './style';
-import './style.css'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
    return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CustomCard() {
+export default function CustomCard({ token, produto, setErro, setOpenBackdrop, listarProdutos }) {
    const classes = useStyles();
-   const [open, setOpen] = React.useState(false);
+   const [open, setOpen] = useState(false);
+   const history = useHistory();
 
    const handleClickOpen = () => {
       setOpen(true);
@@ -29,21 +38,81 @@ export default function CustomCard() {
    const handleClose = () => {
       setOpen(false);
    };
+
+   const handlePropagation = (e) => {
+      e.stopPropagation();
+   }
+
+   async function deletarProduto() {
+      setErro('');
+      setOpenBackdrop(true);
+      try {
+         const resp = await fetch(baseURL(`produtos/${produto.id}`), {
+            method: 'DELETE',
+            headers: {
+               'Authorization': `Bearer ${token}`
+            }
+         });
+
+         const data = await resp.json();
+
+         setOpenBackdrop(false);
+
+         if (!resp.ok) return setErro(data.erro);
+
+         handleClose();
+         listarProdutos();
+      } catch (error) {
+         setOpenBackdrop(false);
+         setErro(error.message);
+      }
+   }
+
    return (
       <>
-         <div className="card">
-            <header><DeleteSweepIcon onClick={handleClickOpen} className={`${classes.icon} card_icon`} /></header>
-            <div className="card_body">
-               <img src="https://i.pinimg.com/564x/26/f6/ba/26f6ba75a1a5a182ce82562f3c6a93a0.jpg" alt="card" />
-               <Typography variant="h6">Nome do Produto</Typography>
-               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis</p>
-               <footer>
-                  <span className="card_unidade">3 UNIDADES</span>
-                  <span className="card_preco">R$ 99.99</span>
-               </footer>
-            </div>
+         <Card
+            className={classes.card}
+            key={produto.id}
+            onClick={() => history.push(`/produtos/${produto.id}/editar`)}
+         >
+            <CardActionArea>
+               <CardMedia
+                  className={classes.imagem}
+                  image={produto.imagem}
+                  title={produto.descricao}
+               >
+                  <div onClick={(e) => handlePropagation(e)}>
+                     <DeleteSweepIcon
+                        className={classes.deleteIcon}
+                        onClick={handleClickOpen}
+                     />
+                  </div>
+               </CardMedia>
+               <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                     {produto.nome}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                     {produto.descricao}
+                  </Typography>
+               </CardContent>
+            </CardActionArea>
+            <CardActions className={classes.cardActions}>
+               <Typography
+                  gutterBottom
+                  color="textSecondary"
+                  variant="body2"
+                  component="p"
+               >
+                  {produto.estoque}{" "}
+                  {produto.estoque > 1 ? "UNIDADES" : "UNIDADE"}
+               </Typography>
+               <Typography gutterBottom variant="body2" component="p" className={classes.preco}>
+                  R$ {String((produto.preco / 100).toFixed(2)).replace(".", ",")}
+               </Typography>
+            </CardActions>
+         </Card>
 
-         </div>
          <Dialog
             open={open}
             TransitionComponent={Transition}
@@ -62,7 +131,7 @@ export default function CustomCard() {
                <Button onClick={handleClose} color="primary" variant="contained">
                   Manter Produto
                </Button>
-               <Button onClick={handleClose} color="secondary" variant="contained">
+               <Button onClick={deletarProduto} color="secondary" variant="contained">
                   Remover
                </Button>
             </DialogActions>
