@@ -1,5 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import useAuth from "../../../hooks/useAuth";
+
+import Backdrop from '../../../components/Backdrop';
+
+import baseURL from '../../../utils/url';
 
 import clsx from 'clsx';
 
@@ -20,16 +27,41 @@ import Alert from '@material-ui/lab/Alert';
 import './style.css';
 import useStyles from './style';
 
-//TODO VER O BOTAO DE REPETIR SENHA
+const validate = ({
+   senha,
+   senhaVerified,
+   nome,
+   nome_loja,
+   email,
+}) => {
+   if (!nome) return 'O campo nome é obrigatório.';
+
+   if (!nome_loja) return 'O campo nome da loja é obrigatório.';
+
+   if (!email) return 'O campo email é obrigatório.';
+
+   if (!senha) return 'O campo senha é obrigatório.';
+
+   if (senha !== senhaVerified) return 'As senhas devem ser iguais.';
+}
 
 function Cadastro() {
    const classes = useStyles();
+   const history = useHistory();
+   const { register, handleSubmit } = useForm();
+   const { token } = useAuth();
+   const [erro, setErro] = useState("");
+   const [openBackdrop, setOpenBackdrop] = useState(false);
    const [values, setValues] = useState({
-      password: '',
       showPassword: false,
-      rPassword: '',
-      showRPassword: false
    });
+
+   useEffect(() => {
+      if (token) {
+         history.push('/produtos');
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
    const handleChange = (prop) => (event) => {
       setValues({ ...values, [prop]: event.target.value });
@@ -43,33 +75,71 @@ function Cadastro() {
       event.preventDefault();
    };
 
-   const handleClickShowRPassword = () => {
-      setValues({ ...values, showRPassword: !values.showRPassword });
-   };
+   async function onSubmit(data) {
+      setErro('');
 
-   const handleMouseDownRPassword = (event) => {
-      event.preventDefault();
-   };
+      const falha = validate(data);
+      if (falha) return setErro(falha);
+
+      setOpenBackdrop(true);
+
+      const dados = {
+         nome: data.nome,
+         nome_loja: data.nome_loja,
+         email: data.email,
+         senha: data.senha
+      }
+      try {
+         const resp = await fetch(baseURL("cadastro"), {
+            method: 'POST',
+            body: JSON.stringify(dados),
+            headers: {
+               'Content-type': 'application/json'
+            }
+         });
+
+         const result = await resp.json();
+
+         setOpenBackdrop(false);
+         if (!resp.ok) return setErro(result.erro);
+
+         history.push('/');
+      } catch (error) {
+         setOpenBackdrop(false);
+         setErro(error.message);
+      }
+   }
 
    return (
-      <div className="container">
+      <div className={`container ${classes.container}`}>
          <div className="cadastro_container">
             <header>
                <Typography variant="h4">
                   Cadastro
                </Typography>
             </header>
-            <form>
-               <TextField id="standard-basic" label="Seu nome" />
-               <TextField id="standard-basic" label="Nome da Loja" />
-               <TextField id="standard-basic" label="E-mail" />
-
+            <form onSubmit={handleSubmit(onSubmit)}>
+               <TextField
+                  id="nome"
+                  label="Seu nome"
+                  {...register("nome")}
+               />
+               <TextField
+                  id="nome_loja"
+                  label="Nome da loja"
+                  {...register("nome_loja")}
+               />
+               <TextField
+                  id="email"
+                  label="E-mail"
+                  {...register("email")}
+               />
                <FormControl className={clsx(classes.margin, classes.textField)}>
                   <InputLabel htmlFor="standard-adornment-password">Senha</InputLabel>
                   <Input
                      id="standard-adornment-password"
+                     {...register("senha")}
                      type={values.showPassword ? 'text' : 'password'}
-                     value={values.password}
                      onChange={handleChange('password')}
                      endAdornment={
                         <InputAdornment position="end">
@@ -84,36 +154,41 @@ function Cadastro() {
                      }
                   />
                </FormControl>
-
                <FormControl className={clsx(classes.margin, classes.textField)}>
-                  <InputLabel htmlFor="standard-adornment-rPassword">Senha</InputLabel>
+                  <InputLabel htmlFor="senhaVerified">
+                     Repita a senha
+                  </InputLabel>
                   <Input
-                     id="standard-adornment-rPassword"
-                     type={values.showRPassword ? 'text' : 'rPassword'}
-                     value={values.rPassword}
-                     onChange={handleChange('rPassword')}
+                     id="senhaVerified"
+                     {...register("senhaVerified")}
+                     type={values.showPassword ? 'text' : 'password'}
                      endAdornment={
                         <InputAdornment position="end">
                            <IconButton
-                              aria-label="toggle rPassword visibility"
-                              onClick={handleClickShowRPassword}
-                              onMouseDown={handleMouseDownRPassword}
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
                            >
-                              {values.showRPassword ? <Visibility /> : <VisibilityOff />}
+                              {values.showPassword ? <Visibility /> : <VisibilityOff />}
                            </IconButton>
                         </InputAdornment>
                      }
                   />
                </FormControl>
 
-               <Alert severity="error">This is an error alert — check it out!</Alert>
+               {erro && <Alert severity="error">{erro}</Alert>}
 
-               <Button variant="contained" color="primary">
-                  <Link className={classes.link} to="/produtos">Entrar</Link>
+               <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+               >
+                  Entrar
                </Button>
             </form>
             <span>Ja possui uma conta? <Link to="/">ACESSE</Link></span>
          </div>
+         <Backdrop open={openBackdrop} />
       </div>
    );
 }

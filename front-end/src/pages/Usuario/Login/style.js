@@ -17,7 +17,11 @@ const useStyles = makeStyles((theme) => ({
    link: {
       textDecoration: 'none',
       color: 'white',
-   }
+   },
+   backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+   },
 }));
 
 
