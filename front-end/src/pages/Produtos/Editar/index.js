@@ -20,21 +20,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-import './style.css'
-
-const useStyles = makeStyles((theme) => ({
-   root: {
-      width: '50%',
-   },
-   paper: {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-      backgroundColor: '#e3f6f5'
-   },
-   cancelar: {
-      color: 'white',
-   }
-}));
+// import './style.css'
+import useStyles from './style.js';
 
 
 function EditarProduto() {
@@ -108,70 +95,73 @@ function EditarProduto() {
       <BaseLayout icon1={"active"} icon2={"normal"}>
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Editar Produto</Typography>
 
-         <div className="editar_produto">
-            <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
-               <Grid container spacing={3}>
-                  <Grid item xs={10}>
-                     <Paper className={classes.paper}>
-                        <TextField
-                           id="nome"
-                           {...register("nome")}
-                           label="Nome do Produto"
-                           fullWidth
-                        />
-                     </Paper>
-                  </Grid>
-                  <Grid item xs={3}>
-                     <Paper className={classes.paper}>
-                        <FormControl fullWidth className={classes.margin}>
-                           <InputLabel htmlFor="preco">Preço</InputLabel>
-                           <Input
-                              id="preco"
-                              {...register("preco")}
-                              type="number"
-                              min="1"
-                              step=".01"
-                              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+         <div className={classes.root}>
+            <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+               <div>
+                  <Grid container spacing={3}>
+                     <Grid item xs={11}>
+                        <Paper className={classes.paper}>
+                           <TextField
+                              id="nome"
+                              {...register("nome")}
+                              label="Nome do Produto"
+                              fullWidth
                            />
-                        </FormControl>
-                     </Paper>
-                  </Grid>
-                  <Grid item xs={3}>
-                     <Paper className={classes.paper}>
-                        <FormControl fullWidth className={classes.margin}>
-                           <InputLabel htmlFor="estoque">Estoque</InputLabel>
-                           <Input
-                              id="estoque"
-                              {...register("estoque")}
-                              type="number"
-                              min="1"
-                              startAdornment={<InputAdornment position="start">Un</InputAdornment>}
+                        </Paper>
+                     </Grid>
+
+                     <Grid item xs={3}>
+                        <Paper className={classes.paper}>
+                           <FormControl fullWidth >
+                              <InputLabel htmlFor="preco">Preço</InputLabel>
+                              <Input
+                                 id="preco"
+                                 {...register("preco")}
+                                 type="number"
+                                 min="1"
+                                 step=".01"
+                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                              />
+                           </FormControl>
+                        </Paper>
+                     </Grid>
+                     <Grid item xs={3}>
+                        <Paper className={classes.paper}>
+                           <FormControl fullWidth >
+                              <InputLabel htmlFor="estoque">Estoque</InputLabel>
+                              <Input
+                                 id="estoque"
+                                 {...register("estoque")}
+                                 type="number"
+                                 min="1"
+                                 startAdornment={<InputAdornment position="start">Un</InputAdornment>}
+                              />
+                           </FormControl>
+                        </Paper>
+                     </Grid>
+                     <Grid item xs={11}>
+                        <Paper className={classes.paper}>
+                           <TextField
+                              id="descricao"
+                              {...register("descricao")}
+                              label="Descrição do Produto"
+                              fullWidth
                            />
-                        </FormControl>
-                     </Paper>
+                        </Paper>
+                     </Grid>
+                     <Grid item xs={11}>
+                        <Paper className={classes.paper}>
+                           <TextField
+                              id="imagem"
+                              {...register("imagem")}
+                              label="Imagem"
+                              fullWidth
+                           />
+                        </Paper>
+                     </Grid>
                   </Grid>
-                  <Grid item xs={10}>
-                     <Paper className={classes.paper}>
-                        <TextField
-                           id="descricao"
-                           {...register("descricao")}
-                           label="Descrição do Produto"
-                           fullWidth
-                        />
-                     </Paper>
-                  </Grid>
-                  <Grid item xs={10}>
-                     <Paper className={classes.paper}>
-                        <TextField
-                           id="imagem"
-                           {...register("imagem")}
-                           label="Imagem"
-                           fullWidth
-                        />
-                     </Paper>
-                  </Grid>
-               </Grid>
-               <div className="acoes">
+               </div>
+               <div className={classes.acoes}>
                   <Button
                      onClick={() => history.push(`/produtos`)}
                      variant="outlined"
@@ -187,10 +177,7 @@ function EditarProduto() {
                   </Button>
                </div>
             </form>
-
-            <div className="produto_imagem">
-               <img src={produto.imagem} alt="card" />
-            </div>
+            <img className={classes.imagem} src={produto.imagem} alt="card" />
          </div>
 
          <Backdrop open={openBackdrop} />

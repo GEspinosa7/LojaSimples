@@ -1,6 +1,3 @@
-import {
-   NavLink
-} from 'react-router-dom';
 import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import { useHistory } from "react-router-dom";
@@ -15,18 +12,15 @@ import baseURL from '../../../utils/url';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import './style.css'
+import useStyles from './style.js';
 
 function ListarProdutos() {
+   const classes = useStyles();
    const { token } = useAuth();
    const [erro, setErro] = useState("");
    const history = useHistory();
    const [openBackdrop, setOpenBackdrop] = useState(false);
    const [produtos, setProdutos] = useState([]);
-
-   const handlePropagation = (e) => {
-      e.stopPropagation();
-   }
 
    async function listarProdutos() {
       setErro("");
@@ -35,6 +29,7 @@ function ListarProdutos() {
          const resp = await fetch(baseURL("produtos"), {
             headers: {
                Authorization: `Bearer ${token}`,
+               'Content-type': 'application/json',
             },
          });
 
@@ -56,7 +51,7 @@ function ListarProdutos() {
    return (
       <BaseLayout icon1={"active"} icon2={"normal"}>
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Seus Produtos</Typography>
-         <div className="cards">
+         <div className={classes.cards}>
             {produtos.map((p) => {
                return (
                   <CustomCard

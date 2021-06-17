@@ -6,4 +6,5 @@ body {
 
 .NavLink {
     text-decoration: none;
+    color: inherit;
 }

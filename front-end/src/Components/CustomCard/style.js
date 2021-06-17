@@ -1,14 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-   icon: {
-      backgroundColor: '#FF505F',
-      fontSize: '20pt',
-      padding: 8,
-      borderRadius: 100,
-      marginTop: -30,
-      cursor: 'pointer',
-   },
    dialog: {
       backgroundColor: '#FFFFFF',
       borderRadius: 24,
@@ -21,13 +13,14 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: 15,
       borderRadius: 20,
    },
-   deleteIcon: {
+   icon: {
       zIndex: 2,
       padding: 12,
       backgroundColor: "#FF505F",
       borderRadius: 50,
-      marginTop: 22,
-      marginLeft: 22
+      boxShadow: "2px 2px 4px 2px rgba(0,0,0,0.31)",
+      marginTop: 5,
+      marginLeft: 5
    },
    imagem: {
       width: 200,

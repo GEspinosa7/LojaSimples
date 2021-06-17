@@ -23,7 +23,6 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import Alert from '@material-ui/lab/Alert';
 
-import './style.css';
 import useStyles from './style';
 
 function validate({ email, senha }) {
@@ -92,14 +91,14 @@ function Login() {
    };
 
    return (
-      <div className="container">
-         <div className="login_container">
-            <header>
+      <div className={classes.root}>
+         <div className={classes.login}>
+            <header className={classes.header}>
                <Typography variant="h4">
                   Login
                </Typography>
             </header>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
 
                <TextField
                   id="email"

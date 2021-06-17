@@ -24,7 +24,6 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import Alert from '@material-ui/lab/Alert';
 
-import './style.css';
 import useStyles from './style';
 
 const validate = ({
@@ -111,14 +110,14 @@ function Cadastro() {
    }
 
    return (
-      <div className={`container ${classes.container}`}>
-         <div className="cadastro_container">
+      <div className={classes.root}>
+         <div className={classes.cadastro}>
             <header>
                <Typography variant="h4">
                   Cadastro
                </Typography>
             </header>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
                <TextField
                   id="nome"
                   label="Seu nome"
@@ -135,9 +134,9 @@ function Cadastro() {
                   {...register("email")}
                />
                <FormControl className={clsx(classes.margin, classes.textField)}>
-                  <InputLabel htmlFor="standard-adornment-password">Senha</InputLabel>
+                  <InputLabel htmlFor="senha">Senha</InputLabel>
                   <Input
-                     id="standard-adornment-password"
+                     id="senha"
                      {...register("senha")}
                      type={values.showPassword ? 'text' : 'password'}
                      onChange={handleChange('password')}
@@ -183,7 +182,7 @@ function Cadastro() {
                   color="primary"
                   type="submit"
                >
-                  Entrar
+                  CRIAR CONTA
                </Button>
             </form>
             <span>Ja possui uma conta? <Link to="/">ACESSE</Link></span>

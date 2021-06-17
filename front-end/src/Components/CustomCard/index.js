@@ -26,7 +26,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
    return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CustomCard({ token, produto, setErro, setOpenBackdrop, listarProdutos }) {
+const CustomCard = ({ token, produto, setErro, setOpenBackdrop, listarProdutos }) => {
    const classes = useStyles();
    const [open, setOpen] = useState(false);
    const history = useHistory();
@@ -83,7 +83,7 @@ export default function CustomCard({ token, produto, setErro, setOpenBackdrop, l
                >
                   <div onClick={(e) => handlePropagation(e)}>
                      <DeleteSweepIcon
-                        className={classes.deleteIcon}
+                        className={classes.icon}
                         onClick={handleClickOpen}
                      />
                   </div>
@@ -139,3 +139,5 @@ export default function CustomCard({ token, produto, setErro, setOpenBackdrop, l
       </>
    );
 }
+
+export default CustomCard;

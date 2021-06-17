@@ -5,9 +5,15 @@ const useStyles = makeStyles((theme) => ({
       width: '50%',
    },
    paper: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       textAlign: 'center',
       backgroundColor: '#e3f6f5'
+   },
+   acoes: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      marginTop: 20,
+      width: '100%'
    },
    cancelar: {
       color: 'white',

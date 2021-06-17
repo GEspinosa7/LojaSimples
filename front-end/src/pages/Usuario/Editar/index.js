@@ -85,7 +85,7 @@ const EditarUsuario = () => {
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Editar Perfil</Typography>
          <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2}>
-               <Grid item xs={10}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="nome"
@@ -95,7 +95,7 @@ const EditarUsuario = () => {
                      />
                   </Paper>
                </Grid>
-               <Grid item xs={10}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="nome_loja"
@@ -105,7 +105,7 @@ const EditarUsuario = () => {
                      />
                   </Paper>
                </Grid>
-               <Grid item xs={10}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="email"
@@ -115,7 +115,7 @@ const EditarUsuario = () => {
                      />
                   </Paper>
                </Grid>
-               <Grid item xs={10}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
                         <InputLabel htmlFor="nova_senha" >Nova senha</InputLabel>
@@ -138,7 +138,7 @@ const EditarUsuario = () => {
                      </FormControl>
                   </Paper>
                </Grid>
-               <Grid item xs={10}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
                         <InputLabel htmlFor="nova_senha_verified" >Repita a nova senha</InputLabel>
@@ -162,7 +162,7 @@ const EditarUsuario = () => {
                   </Paper>
                </Grid>
             </Grid>
-            <div className="acoes">
+            <div className={classes.acoes}>
                <Button
                   onClick={() => history.push(`/perfil`)}
                   variant="outlined"

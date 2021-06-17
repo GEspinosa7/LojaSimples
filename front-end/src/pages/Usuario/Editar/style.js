@@ -9,6 +9,12 @@ const useStyles = makeStyles((theme) => ({
       textAlign: 'center',
       backgroundColor: '#e3f6f5'
    },
+   acoes: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      marginTop: 20,
+      width: '100%'
+   },
    cancelar: {
       color: 'white',
    },

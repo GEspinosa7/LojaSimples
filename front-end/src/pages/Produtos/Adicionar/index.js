@@ -81,7 +81,7 @@ function AddProduto() {
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Adicionar Produto</Typography>
          <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
-               <Grid item xs={12}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="nome"
@@ -91,7 +91,17 @@ function AddProduto() {
                      />
                   </Paper>
                </Grid>
-               <Grid item xs={6}>
+               <Grid item xs={11}>
+                  <Paper className={classes.paper}>
+                     <TextField
+                        id="categoria"
+                        label="Categoria"
+                        fullWidth
+                        {...register("categoria")}
+                     />
+                  </Paper>
+               </Grid>
+               <Grid item xs={3}>
                   <Paper className={classes.paper}>
                      <FormControl fullWidth className={classes.margin}>
                         <InputLabel htmlFor="preco">Preço</InputLabel>
@@ -106,7 +116,7 @@ function AddProduto() {
                      </FormControl>
                   </Paper>
                </Grid>
-               <Grid item xs={6}>
+               <Grid item xs={3}>
                   <Paper className={classes.paper}>
                      <FormControl fullWidth className={classes.margin}>
                         <InputLabel htmlFor="estoque">Estoque</InputLabel>
@@ -120,7 +130,7 @@ function AddProduto() {
                      </FormControl>
                   </Paper>
                </Grid>
-               <Grid item xs={12}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="descricao"
@@ -130,7 +140,7 @@ function AddProduto() {
                      />
                   </Paper>
                </Grid>
-               <Grid item xs={12}>
+               <Grid item xs={11}>
                   <Paper className={classes.paper}>
                      <TextField
                         id="imagem"
@@ -142,16 +152,15 @@ function AddProduto() {
                   </Paper>
                </Grid>
             </Grid>
-            <div className="acoes">
-               <NavLink to="/produtos">
-                  <Button
-                     variant="outlined"
-                     className={classes.cancelar}
-                     style={{ marginRight: '20px' }}
-                  >
-                     cancelar
-                  </Button>
-               </NavLink>
+            <div className={classes.acoes}>
+               <Button
+                  onClick={() => history.push(`/produtos`)}
+                  variant="outlined"
+                  className={classes.cancelar}
+                  style={{ marginRight: '20px' }}
+               >
+                  cancelar
+               </Button>
                <Button
                   type="submit"
                   variant="contained"
