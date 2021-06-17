@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import useAuth from "../../../hooks/useAuth";
+import { useParams, useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
-import BaseLayout from '../../../Components/BaseLayout';
+import BaseLayout from '../../../components/BaseLayout';
+import CustomSnack from "../../../components/CustomSnack";
+import Backdrop from "../../../components/Backdrop";
+
+import baseURL from '../../../utils/url';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -12,9 +19,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Snackbar from '@material-ui/core/Snackbar';
-
-import Alert from '@material-ui/lab/Alert';
 
 import './style.css'
 
@@ -35,103 +39,162 @@ const useStyles = makeStyles((theme) => ({
 
 function EditarProduto() {
    const classes = useStyles();
+   const history = useHistory();
+   const { register, handleSubmit } = useForm();
+   const { token } = useAuth();
+   const { id } = useParams();
+   const [erro, setErro] = useState('');
+   const [openBackdrop, setOpenBackdrop] = useState(false);
+   const [produto, setProduto] = useState([]);
 
-   const [values, setValues] = useState({
-      qtd: '',
-      unidade: '',
-   });
+   const obterProduto = async () => {
+      setErro("");
+      setOpenBackdrop(true);
+      try {
+         const resp = await fetch(baseURL(`produtos/${id}`), {
+            headers: {
+               method: 'GET',
+               Authorization: `Bearer ${token}`,
+               'Content-type': 'application/json',
+            },
+         });
 
-   const handleChange = (prop) => (event) => {
-      setValues({ ...values, [prop]: event.target.value });
-   };
+         const produto = await resp.json();
+         setOpenBackdrop(false);
 
-   const [open, setOpen] = useState(false);
+         if (!resp.ok) return setErro(produto.erro);
 
-   const handleClick = () => {
-      setOpen(true);
-   };
-
-   const handleClose = (event, reason) => {
-      if (reason === 'clickaway') {
-         return;
+         setProduto(produto);
+      } catch (error) {
+         setOpenBackdrop(false);
+         return setErro(error.message);
       }
+   }
 
-      setOpen(false);
-   };
+   useEffect(() => {
+      obterProduto();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+
+   const onSubmit = async (data) => {
+      setErro("");
+
+      try {
+         setOpenBackdrop(true);
+         console.log(data)
+         const resp = await fetch(baseURL(`produtos/${id}`), {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+               'Authorization': `Bearer ${token}`,
+               'Content-type': 'application/json',
+            }
+         });
+
+         const result = await resp.json();
+         setOpenBackdrop(false);
+
+         if (!resp.ok) return setErro(result.erro);
+
+         history.push('/produtos');
+      } catch (error) {
+         setOpenBackdrop(false);
+         return setErro(error.message)
+      }
+   }
+
+
    return (
       <BaseLayout icon1={"active"} icon2={"normal"}>
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Editar Produto</Typography>
 
          <div className="editar_produto">
-            <div className={classes.root}>
+            <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
                <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid item xs={10}>
                      <Paper className={classes.paper}>
-                        <TextField id="filled-basic" label="Nome do Produto" fullWidth />
+                        <TextField
+                           id="nome"
+                           {...register("nome")}
+                           label="Nome do Produto"
+                           fullWidth
+                        />
                      </Paper>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={3}>
                      <Paper className={classes.paper}>
                         <FormControl fullWidth className={classes.margin}>
-                           <InputLabel htmlFor="standard-adornment-amount">Preço</InputLabel>
+                           <InputLabel htmlFor="preco">Preço</InputLabel>
                            <Input
-                              id="standard-adornment-amount"
+                              id="preco"
+                              {...register("preco")}
                               type="number"
                               min="1"
                               step=".01"
-                              value={values.qtd}
-                              onChange={handleChange('qtd')}
                               startAdornment={<InputAdornment position="start">$</InputAdornment>}
                            />
                         </FormControl>
                      </Paper>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={3}>
                      <Paper className={classes.paper}>
                         <FormControl fullWidth className={classes.margin}>
-                           <InputLabel htmlFor="standard-adornment-amount2">Estoque</InputLabel>
+                           <InputLabel htmlFor="estoque">Estoque</InputLabel>
                            <Input
-                              id="standard-adornment-amount2"
+                              id="estoque"
+                              {...register("estoque")}
                               type="number"
                               min="1"
-                              value={values.unidade}
-                              onChange={handleChange('unidade')}
                               startAdornment={<InputAdornment position="start">Un</InputAdornment>}
                            />
                         </FormControl>
                      </Paper>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={10}>
                      <Paper className={classes.paper}>
-                        <TextField id="filled-basic" label="Descrição do Produto" fullWidth />
+                        <TextField
+                           id="descricao"
+                           {...register("descricao")}
+                           label="Descrição do Produto"
+                           fullWidth
+                        />
                      </Paper>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={10}>
                      <Paper className={classes.paper}>
-                        <TextField id="filled-basic" label="Imagem" fullWidth />
+                        <TextField
+                           id="imagem"
+                           {...register("imagem")}
+                           label="Imagem"
+                           fullWidth
+                        />
                      </Paper>
                   </Grid>
                </Grid>
-            </div>
+               <div className="acoes">
+                  <Button
+                     onClick={() => history.push(`/produtos`)}
+                     variant="outlined"
+                     className={classes.cancelar}
+                  >
+                     Cancelar
+                  </Button>
+                  <Button
+                     type="submit"
+                     variant="contained"
+                  >
+                     Salvar alterações
+                  </Button>
+               </div>
+            </form>
 
             <div className="produto_imagem">
-               <img src="https://i.pinimg.com/564x/26/f6/ba/26f6ba75a1a5a182ce82562f3c6a93a0.jpg" alt="card" />
+               <img src={produto.imagem} alt="card" />
             </div>
          </div>
 
-         <div className="acoes">
-            <Button variant="outlined" className={classes.cancelar} style={{ marginRight: '20px' }}>Cancelar</Button>
-            <Button variant="contained" onClick={handleClick}>Adicionar Produto</Button>
-         </div>
-
-
-
-         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success">
-               This is a success message!
-            </Alert>
-         </Snackbar>
-
+         <Backdrop open={openBackdrop} />
+         <CustomSnack erro={erro} />
       </BaseLayout>
    );
 }

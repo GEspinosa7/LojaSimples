@@ -4,3 +4,9 @@
     justify-content: space-around;
     width: 100%;
 }
+
+.produto_imagem img {
+    width: 200px;
+    /* height: 250px; */
+    border-radius: 25px;
+}
