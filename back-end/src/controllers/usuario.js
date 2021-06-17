@@ -1,6 +1,7 @@
 const db = require('../connection');
 const bcrypt = require("bcrypt");
 const { validarCadastro, validarEdicao } = require('../validations/usuario');
+const { updateUsuario } = require('../intermediaries/usuario');
 
 const cadastrarUsuario = async (req, res) => {
    const { nome, nome_loja, email, senha } = req.body;
@@ -41,63 +42,23 @@ const mostrarPerfil = async (req, res) => {
 
 const editarPerfil = async (req, res) => {
    const { usuario } = req;
-   const { nome, email, senha, nome_loja } = req.body;
+   const { email } = req.body;
 
    const erro = validarEdicao(req.body);
    if (erro) return res.status(400).json({ erro: erro });
 
-   const novosDados = {
-      nome: '',
-      email: '',
-      senha: '',
-      nome_loja: ''
-   };
-
    try {
-      nome ? novosDados.nome = nome : novosDados.nome = usuario.nome;
-      nome_loja ? novosDados.nome_loja = nome_loja : novosDados.nome_loja = usuario.nome_loja;
+      const encontrarEmail = 'select * from usuarios where email = $1';
+      const { rowCount } = await db.query(encontrarEmail, [email]);
+      if (rowCount > 0) return res.status(400).json({ erro: 'Este email não pode ser escolhido pois ja está cadastrado' });
 
-      if (email) {
-         const encontrarEmail = 'select * from usuarios where email = $1';
-         const { rows, rowCount } = await db.query(encontrarEmail, [email]);
-         if (rowCount > 0) return res.status(400).json({ erro: 'Este email não pode ser escolhido pois ja está cadastrado' });
+      const queryParametros = [];
+      const query = await updateUsuario(req.body, 0, [], queryParametros);
+      queryParametros.push(usuario.id);
 
-         novosDados.email = email;
-      } else {
-         novosDados.email = usuario.email;
-      }
-
-      if (senha) {
-         const cryptSenha = await bcrypt.hash(senha, 10);
-         novosDados.senha = cryptSenha;
-
-         const editarUsuario = `
-            update usuarios 
-            set
-            nome = $1,
-            email = $2,
-            senha = $3,
-            nome_loja = $4
-            where id = $5;
-         `;
-
-         const { rowCount } = await db.query(editarUsuario, [novosDados.nome, novosDados.email, novosDados.senha, novosDados.nome_loja, usuario.id]);
-         if (rowCount === 0) return res.status(400).json({ erro: 'Não foi possível atualizar os dados do usuário' });
-
-         return res.status(200).json({ sucesso: 'Usuário atualizado com sucesso!' });
-      }
-
-      const editarUsuario = `
-         update usuarios 
-         set
-         nome = $1,
-         email = $2,
-         nome_loja = $3
-         where id = $4;
-      `;
-
-      const { rowCount } = await db.query(editarUsuario, [novosDados.nome, novosDados.email, novosDados.nome_loja, usuario.id]);
-      if (rowCount === 0) return res.status(400).json({ erro: 'Não foi possível atualizar os dados do usuário' });
+      const novosDadosUsuario = `update usuarios set${query.values} where id = $${query.values.length + 1}`;
+      const usuarioAtualizado = await db.query(novosDadosUsuario, queryParametros);
+      if (usuarioAtualizado.rowCount === 0) return res.status(400).json({ erro: 'Não foi possível atualizar os dados do usuário' });
 
       return res.status(200).json({ sucesso: 'Usuário atualizado com sucesso!' });
    } catch (error) {

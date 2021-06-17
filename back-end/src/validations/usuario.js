@@ -13,4 +13,6 @@ const validarEdicao = ({ nome, nome_loja, email, senha }) => {
 }
 
 
+
+
 module.exports = { validarCadastro, validarEdicao };
