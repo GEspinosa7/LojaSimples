@@ -1,30 +1,52 @@
 import {
    NavLink
 } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
-import BaseLoyout from '../../../Components/BaseLayout';
+import BaseLoyout from '../../../components/BaseLayout';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-
 
 import useStyles from './style.js';
+import baseURL from '../../../utils/url';
 
 function Perfil() {
    const classes = useStyles();
+   const history = useHistory();
+   const { usuario, token, setUsuario } = useAuth();
+   const [erro, setErro] = useState("");
+   const [openBackdrop, setOpenBackdrop] = useState(false);
 
-   const [values, setValues] = useState({
-      qtd: '',
-      unidade: '',
-   });
+   const obetUsuario = async () => {
+      setErro("");
+      setOpenBackdrop(true);
+      try {
+         const resp = await fetch(baseURL("perfil"), {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         });
 
-   const handleChange = (prop) => (event) => {
-      setValues({ ...values, [prop]: event.target.value });
-   };
+         const dados = await resp.json();
+         setOpenBackdrop(false);
+
+         if (!resp.ok) return setErro(dados.erro);
+
+         setUsuario(dados);
+      } catch (error) {
+         setOpenBackdrop(false);
+         setErro(error.message);
+      }
+   }
+   useEffect(() => {
+      obetUsuario();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
 
    return (
@@ -32,24 +54,29 @@ function Perfil() {
          <Typography variant="h5" style={{ color: "#BAE8E8" }}>Perfil</Typography>
          <div className={classes.root}>
             <Grid container spacing={3}>
-               <Grid item xs={12}>
+               <Grid item xs={8}>
                   <Paper className={classes.paper}>
-                     <TextField id="filled-basic" label="Seu Nome" fullWidth />
+                     {usuario.nome}
                   </Paper>
                </Grid>
-               <Grid item xs={12}>
+               <Grid item xs={8}>
                   <Paper className={classes.paper}>
-                     <TextField id="filled-basic" label="Nome da Loja" fullWidth />
+                     {usuario.nome_loja}
                   </Paper>
                </Grid>
-               <Grid item xs={12}>
+               <Grid item xs={8}>
                   <Paper className={classes.paper}>
-                     <TextField id="filled-basic" label="E-mail" fullWidth />
+                     {usuario.email}
                   </Paper>
                </Grid>
             </Grid>
          </div>
-         <NavLink to="/editar_perfil"><Button variant="contained">Editar Perfil</Button></NavLink>
+         <Button
+            variant="contained"
+            onClick={() => history.push("/perfil/editar")}
+         >
+            Editar Perfil
+         </Button>
       </BaseLoyout>
    );
 }
