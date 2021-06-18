@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 
-
 import baseURL from '../../utils/url';
 
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +9,6 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -19,6 +17,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 
 import useStyles from './style';
 
@@ -43,8 +42,8 @@ const CustomCard = ({ token, produto, setErro, setOpenBackdrop, listarProdutos }
       e.stopPropagation();
    }
 
-   async function deletarProduto() {
-      setErro('');
+   const deletarProduto = async () => {
+      setErro("");
       setOpenBackdrop(true);
       try {
          const resp = await fetch(baseURL(`produtos/${produto.id}`), {

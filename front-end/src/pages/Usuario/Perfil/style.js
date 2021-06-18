@@ -11,9 +11,6 @@ const useStyles = makeStyles((theme) => ({
       fontSize: '15pt',
       fontWeight: '300'
    },
-   cancelar: {
-      color: 'white',
-   }
 }));
 
 export default useStyles;

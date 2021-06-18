@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import useAuth from "../../../hooks/useAuth";
-import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useState } from 'react';
+import { useHistory } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
+
+import baseURL from '../../../utils/url';
+
+import { validateEdicao } from "../../../validations/usuario";
 
 import BaseLayout from '../../../components/BaseLayout';
 import CustomSnack from "../../../components/CustomSnack";
-import Backdrop from "../../../components/Backdrop";
+import CustomBackdrop from "../../../components/Backdrop";
 
 import clsx from 'clsx';
 
@@ -23,21 +27,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-
 import useStyles from './style.js';
-import baseURL from '../../../utils/url';
-
-const validate = ({ novaSenha, novaSenhaVerified }) => {
-   if (novaSenha !== novaSenhaVerified) return 'As senhas devem ser iguais.';
-};
 
 const EditarUsuario = () => {
    const classes = useStyles();
-   const { usuario, token } = useAuth();
+   const history = useHistory();
+   const { token } = useAuth();
    const { register, handleSubmit } = useForm();
    const [erro, setErro] = useState("");
    const [openBackdrop, setOpenBackdrop] = useState(false);
-   const history = useHistory();
 
    const [values, setValues] = useState({
       showPassword: false,
@@ -54,7 +52,7 @@ const EditarUsuario = () => {
    const onSubmit = async (data) => {
       setErro("");
 
-      const falha = validate(data);
+      const falha = validateEdicao(data);
       if (falha) return setErro(falha);
 
       setOpenBackdrop(true);
@@ -176,7 +174,7 @@ const EditarUsuario = () => {
             </div>
          </form>
 
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
          <CustomSnack erro={erro} />
       </BaseLayout>
    );

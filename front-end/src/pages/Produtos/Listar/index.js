@@ -1,28 +1,28 @@
+import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
-import { useHistory } from "react-router-dom";
+
+import baseURL from '../../../utils/url';
 
 import BaseLayout from '../../../components/BaseLayout/index';
 import CustomCard from '../../../components/CustomCard';
 import CustomSnack from '../../../components/CustomSnack';
-import Backdrop from '../../../components/Backdrop';
-
-import baseURL from '../../../utils/url';
+import CustomBackdrop from '../../../components/Backdrop';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import useStyles from './style.js';
 
-function ListarProdutos() {
+const ListarProdutos = () => {
    const classes = useStyles();
+   const history = useHistory();
    const { token } = useAuth();
    const [erro, setErro] = useState("");
-   const history = useHistory();
-   const [openBackdrop, setOpenBackdrop] = useState(false);
    const [produtos, setProdutos] = useState([]);
+   const [openBackdrop, setOpenBackdrop] = useState(false);
 
-   async function listarProdutos() {
+   const listarProdutos = async () => {
       setErro("");
       setOpenBackdrop(true);
       try {
@@ -69,7 +69,7 @@ function ListarProdutos() {
             variant="contained"
             onClick={() => history.push(`/produtos/novo`)}
          >Adicionar Produto</Button>
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
          {erro && <CustomSnack erro={erro} />}
       </BaseLayout>
    );

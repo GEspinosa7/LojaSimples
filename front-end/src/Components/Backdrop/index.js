@@ -3,7 +3,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import useStyles from "./style";
 
-export default function Loading({ open }) {
+const CustomBackdrop = ({ open }) => {
    const classes = useStyles();
 
    return (
@@ -12,3 +12,5 @@ export default function Loading({ open }) {
       </Backdrop>
    );
 }
+
+export default CustomBackdrop;

@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { Link, useHistory } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import { Link, useHistory } from 'react-router-dom';
+import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 
-import Backdrop from '../../../components/Backdrop';
+import CustomBackdrop from '../../../components/Backdrop';
 
 import baseURL from '../../../utils/url';
+
+import { validateLogin } from "../../../validations/usuario";
 
 import clsx from 'clsx';
 
@@ -25,25 +27,16 @@ import Alert from '@material-ui/lab/Alert';
 
 import useStyles from './style';
 
-function validate({ email, senha }) {
-   if (!senha) {
-      return 'O campo senha é obrigatório.'
-   }
-   if (!email) {
-      return 'O campo email é obrigatório.'
-   }
-}
-
-function Login() {
+const Login = () => {
    const classes = useStyles();
-   const { setToken, setUsuario, token } = useAuth();
-   const { register, handleSubmit } = useForm();
    const history = useHistory();
+   const { register, handleSubmit } = useForm();
+   const { setToken, setUsuario, token } = useAuth();
+   const [erro, setErro] = useState("");
    const [openBackdrop, setOpenBackdrop] = useState(false);
    const [values, setValues] = useState({
       showPassword: false,
    });
-   const [erro, setErro] = useState("");
 
    useEffect(() => {
       if (token) {
@@ -60,10 +53,10 @@ function Login() {
       event.preventDefault();
    };
 
-   async function onSubmit(data) {
+   const onSubmit = async (data) => {
       setErro("");
 
-      const falha = validate(data);
+      const falha = validateLogin(data);
       if (falha) return setErro(falha);
 
       setOpenBackdrop(true);
@@ -93,7 +86,7 @@ function Login() {
    return (
       <div className={classes.root}>
          <div className={classes.login}>
-            <header className={classes.header}>
+            <header>
                <Typography variant="h4">
                   Login
                </Typography>
@@ -138,7 +131,7 @@ function Login() {
             </form>
             <span>Primeira vez aqui? <Link to="/cadastro">CRIE UMA CONTA</Link></span>
          </div>
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
       </div>
    );
 }

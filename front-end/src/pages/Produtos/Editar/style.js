@@ -20,12 +20,6 @@ const useStyles = makeStyles((theme) => ({
       textAlign: 'center',
       backgroundColor: '#e3f6f5'
    },
-   imagem: {
-      width: 250,
-      minHeight: 200,
-      borderRadius: 25,
-      marginRight: 250,
-   },
    acoes: {
       display: 'flex',
       justifyContent: 'space-around',
@@ -34,7 +28,13 @@ const useStyles = makeStyles((theme) => ({
    },
    cancelar: {
       color: 'white',
-   }
+   },
+   imagem: {
+      width: 250,
+      minHeight: 200,
+      borderRadius: 25,
+      marginRight: 250,
+   },
 }));
 
 export default useStyles;

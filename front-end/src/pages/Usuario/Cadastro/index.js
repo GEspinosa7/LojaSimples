@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import { useHistory } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import useAuth from "../../../hooks/useAuth";
 
-import Backdrop from '../../../components/Backdrop';
-
 import baseURL from '../../../utils/url';
+
+import { validateCadastro } from "../../../validations/usuario";
+
+import CustomBackdrop from '../../../components/Backdrop';
 
 import clsx from 'clsx';
 
@@ -26,29 +28,11 @@ import Alert from '@material-ui/lab/Alert';
 
 import useStyles from './style';
 
-const validate = ({
-   senha,
-   senhaVerified,
-   nome,
-   nome_loja,
-   email,
-}) => {
-   if (!nome) return 'O campo nome é obrigatório.';
-
-   if (!nome_loja) return 'O campo nome da loja é obrigatório.';
-
-   if (!email) return 'O campo email é obrigatório.';
-
-   if (!senha) return 'O campo senha é obrigatório.';
-
-   if (senha !== senhaVerified) return 'As senhas devem ser iguais.';
-}
-
-function Cadastro() {
+const Cadastro = () => {
    const classes = useStyles();
    const history = useHistory();
-   const { register, handleSubmit } = useForm();
    const { token } = useAuth();
+   const { register, handleSubmit } = useForm();
    const [erro, setErro] = useState("");
    const [openBackdrop, setOpenBackdrop] = useState(false);
    const [values, setValues] = useState({
@@ -74,10 +58,10 @@ function Cadastro() {
       event.preventDefault();
    };
 
-   async function onSubmit(data) {
-      setErro('');
+   const onSubmit = async (data) => {
+      setErro("");
 
-      const falha = validate(data);
+      const falha = validateCadastro(data);
       if (falha) return setErro(falha);
 
       setOpenBackdrop(true);
@@ -187,7 +171,7 @@ function Cadastro() {
             </form>
             <span>Ja possui uma conta? <Link to="/">ACESSE</Link></span>
          </div>
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
       </div>
    );
 }

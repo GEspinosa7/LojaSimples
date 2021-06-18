@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react';
-import useAuth from "../../../hooks/useAuth";
-import { useParams, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-
-import BaseLayout from '../../../components/BaseLayout';
-import CustomSnack from "../../../components/CustomSnack";
-import Backdrop from "../../../components/Backdrop";
+import { useState, useEffect } from 'react';
+import { useParams, useHistory } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
 import baseURL from '../../../utils/url';
 
+import BaseLayout from '../../../components/BaseLayout';
+import CustomSnack from "../../../components/CustomSnack";
+import CustomBackdrop from "../../../components/Backdrop";
+
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -20,19 +19,17 @@ import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-// import './style.css'
 import useStyles from './style.js';
 
-
-function EditarProduto() {
+const EditarProduto = () => {
    const classes = useStyles();
    const history = useHistory();
-   const { register, handleSubmit } = useForm();
-   const { token } = useAuth();
    const { id } = useParams();
+   const { token } = useAuth();
+   const { register, handleSubmit } = useForm();
    const [erro, setErro] = useState('');
-   const [openBackdrop, setOpenBackdrop] = useState(false);
    const [produto, setProduto] = useState([]);
+   const [openBackdrop, setOpenBackdrop] = useState(false);
 
    const obterProduto = async () => {
       setErro("");
@@ -180,7 +177,7 @@ function EditarProduto() {
             <img className={classes.imagem} src={produto.imagem} alt="card" />
          </div>
 
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
          <CustomSnack erro={erro} />
       </BaseLayout>
    );

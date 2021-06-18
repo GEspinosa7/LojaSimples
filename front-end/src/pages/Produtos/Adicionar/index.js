@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import useAuth from "../../../hooks/useAuth";
-import { NavLink, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-
-import BaseLayout from '../../../components/BaseLayout';
-import Backdrop from '../../../components/Backdrop';
-import CustomSnack from "../../../components/CustomSnack";
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
 import baseUrl from '../../../utils/url';
+
+import validateCadastro from "../../../validations/produto";
+
+import BaseLayout from '../../../components/BaseLayout';
+import CustomBackdrop from '../../../components/Backdrop';
+import CustomSnack from "../../../components/CustomSnack";
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -21,37 +23,18 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 
 import useStyles from './style.js';
 
-function validate({ nome, preco, estoque, descricao }) {
-   if (!nome) return 'O campo nome é obrigatório.';
-
-   if (!preco) return 'O campo preco é obrigatório.';
-
-   if (!estoque) return 'O campo estoque é obrigatório.';
-
-   if (!descricao) return 'O campo descricao é obrigatório.';
-}
-
-function AddProduto() {
+const AddProduto = () => {
    const classes = useStyles();
-   const { register, handleSubmit } = useForm();
+   const history = useHistory();
    const { token } = useAuth();
+   const { register, handleSubmit } = useForm();
    const [erro, setErro] = useState('');
    const [openBackdrop, setOpenBackdrop] = useState(false);
-   const history = useHistory();
 
-   useEffect(() => {
-      const timeout = setTimeout(() => {
-         setErro("");
-      }, 5000);
-      return () => {
-         clearTimeout(timeout);
-      };
-   }, [erro]);
-
-   async function onSubmit(data) {
+   const onSubmit = async (data) => {
       setErro("");
 
-      const falha = validate(data);
+      const falha = validateCadastro(data);
       if (falha) return setErro(falha);
       try {
          const resp = await fetch(baseUrl("produtos"), {
@@ -170,7 +153,7 @@ function AddProduto() {
             </div>
          </form>
 
-         <Backdrop open={openBackdrop} />
+         <CustomBackdrop open={openBackdrop} />
          <CustomSnack erro={erro} />
       </BaseLayout>
    );

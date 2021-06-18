@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "react-use";
 
-export default function useAuthProvider() {
+const useAuthProvider = () => {
    const [value, setValue] = useLocalStorage('TOKEN', '');
    const [valueUsuario, setValueUsuario] = useLocalStorage('USUARIO', {});
    const [token, setToken] = useState(value);
@@ -10,6 +10,7 @@ export default function useAuthProvider() {
    useEffect(() => {
       setValue(token);
       setValueUsuario(usuario);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [token, usuario]);
 
    return {
@@ -19,3 +20,5 @@ export default function useAuthProvider() {
       setUsuario
    };
 }
+
+export default useAuthProvider;

@@ -1,9 +1,8 @@
-import {
-   NavLink
-} from 'react-router-dom';
-import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
+
+import baseURL from '../../../utils/url';
 
 import BaseLoyout from '../../../components/BaseLayout';
 
@@ -13,9 +12,8 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
 import useStyles from './style.js';
-import baseURL from '../../../utils/url';
 
-function Perfil() {
+const Perfil = () => {
    const classes = useStyles();
    const history = useHistory();
    const { usuario, token, setUsuario } = useAuth();
