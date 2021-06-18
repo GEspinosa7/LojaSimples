@@ -1,3 +1,5 @@
+const db = require('../connection');
+
 const filtrarProdutos = ({ categoria, preco }, count, values, queryParams) => {
    if (categoria) {
       count++;
@@ -47,4 +49,10 @@ const updateProdutos = ({ nome, estoque, categoria, preco, descricao, imagem }, 
    return { values, queryParams };
 };
 
-module.exports = { filtrarProdutos, updateProdutos };
+const encontrarProduto = async (id, usuario_id) => {
+   const { rows, rowCount } = await db.query('select * from produtos where id = $1 and usuario_id = $2', [id, usuario_id]);
+   if (rowCount === 0) return 'Este produto não existe ou não pertence a sua loja';
+   return rows;
+};
+
+module.exports = { filtrarProdutos, updateProdutos, encontrarProduto };

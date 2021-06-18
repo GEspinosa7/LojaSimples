@@ -1,6 +1,6 @@
 const db = require("../connection");
 const { validarCadastro, validarEdicao } = require('../validations/produto');
-const { filtrarProdutos, updateProdutos } = require('../intermediaries/produto');
+const { filtrarProdutos, updateProdutos, encontrarProduto } = require('../intermediaries/produto');
 
 const listarProdutos = async (req, res) => {
    const { usuario } = req;
@@ -24,11 +24,8 @@ const obterProduto = async (req, res) => {
    const { id } = req.params;
 
    try {
-      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
-      const { rows, rowCount } = await db.query(encontrarProduto, [id, usuario.id]);
-      if (rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
-
-      const produto = rows[0];
+      const produto = await encontrarProduto(id, usuario.id);
+      if (typeof produto === 'string') return res.status(400).json({ Erro: produto });
 
       return res.status(200).json(produto);
    } catch (error) {
@@ -62,12 +59,11 @@ const editarProduto = async (req, res) => {
    const { id } = req.params;
 
    const erro = validarEdicao(req.body);
-   if (erro) return res.status(400).json({ erro: erro });
+   if (erro) return res.status(400).json({ Erro: erro });
 
    try {
-      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
-      const produto = await db.query(encontrarProduto, [id, usuario.id]);
-      if (produto.rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
+      const produto = await encontrarProduto(id, usuario.id);
+      if (typeof produto === 'string') return res.status(400).json({ Erro: produto });
 
       const queryParametros = [];
       const query = updateProdutos(req.body, 0, [], queryParametros);
@@ -89,9 +85,8 @@ const deletarProduto = async (req, res) => {
    const { id } = req.params;
 
    try {
-      const encontrarProduto = 'select * from produtos where id = $1 and usuario_id = $2';
-      const produto = await db.query(encontrarProduto, [id, usuario.id]);
-      if (produto.rowCount === 0) return res.status(400).json({ Erro: 'Este produto não existe ou não pertence a sua loja' });
+      const produto = await encontrarProduto(id, usuario.id);
+      if (typeof produto === 'string') return res.status(400).json({ Erro: produto });
 
       const apagarProduto = 'delete from produtos where id = $1  and usuario_id = $2';
       const { rowCount } = await db.query(apagarProduto, [id, usuario.id]);

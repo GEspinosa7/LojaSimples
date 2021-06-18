@@ -12,4 +12,7 @@ const validarEdicao = ({ nome, estoque, preco, descricao }) => {
    if (descricao === null || descricao === '') return 'Campo descricao não pode ser vazio';
 }
 
-module.exports = { validarCadastro, validarEdicao };
+module.exports = {
+   validarCadastro,
+   validarEdicao,
+};

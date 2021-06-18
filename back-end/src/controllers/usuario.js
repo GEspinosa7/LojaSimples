@@ -1,6 +1,7 @@
 const db = require('../connection');
 const bcrypt = require("bcrypt");
 const { validarCadastro, validarEdicao } = require('../validations/usuario');
+const validarEmail = require('../validations/email');
 const { updateUsuario } = require('../intermediaries/usuario');
 
 const cadastrarUsuario = async (req, res) => {
@@ -10,9 +11,8 @@ const cadastrarUsuario = async (req, res) => {
    if (erro) return res.status(400).json({ erro: erro });
 
    try {
-      const encontrarEmail = 'select * from usuarios where email = $1';
-      const { rowCount } = await db.query(encontrarEmail, [email]);
-      if (rowCount > 0) return res.status(400).json({ erro: 'Este email ja está cadastrado' });
+      const emailExiste = await validarEmail(email);
+      if (emailExiste) return res.status(400).json({ erro: emailExiste });
 
       const cryptSenha = await bcrypt.hash(senha, 10);
       const criarUsuario = 'insert into usuarios (nome, nome_loja, email, senha) values ($1, $2, $3, $4)';
@@ -48,9 +48,8 @@ const editarPerfil = async (req, res) => {
    if (erro) return res.status(400).json({ erro: erro });
 
    try {
-      const encontrarEmail = 'select * from usuarios where email = $1';
-      const { rowCount } = await db.query(encontrarEmail, [email]);
-      if (rowCount > 0) return res.status(400).json({ erro: 'Este email não pode ser escolhido pois ja está cadastrado' });
+      const emailExiste = await validarEmail(email);
+      if (emailExiste) return res.status(400).json({ erro: emailExiste });
 
       const queryParametros = [];
       const query = await updateUsuario(req.body, 0, [], queryParametros);
