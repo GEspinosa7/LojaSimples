@@ -1,4 +1,4 @@
-const db = require('../connection');
+const knex = require('../connection');
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwt_secret');
 
@@ -10,11 +10,10 @@ const loginAuth = async (req, res, next) => {
       const token = authorization.replace('Bearer', '').trim();
 
       const { id } = jwt.verify(token, jwtSecret);
-      const econtraUsuario = 'select * from usuarios where id = $1';
-      const { rows, rowCount } = await db.query(econtraUsuario, [id]);
-      if (rowCount === 0) return res.status(404).json({ erro: 'Usuário nao encontrado' });
+      const usuario = await knex('usuarios').where('id', id).first().debug();
+      if (!usuario) return res.status(404).json({ erro: 'Usuário nao encontrado' });
 
-      const { senha: senhaUsuario, ...dadosUsuario } = rows[0];
+      const { senha: senhaUsuario, ...dadosUsuario } = usuario;
 
       req.usuario = dadosUsuario;
 
